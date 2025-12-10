@@ -21,7 +21,7 @@ function randomNumber(min, max) {
 
 function showInstructions() {
     moves.innerHTML = `Hátralevő lépések: ${move}`
-    score.innerHTML = `Pontszám: ${points}` 
+    score.innerHTML = `Pontszám: ${points}`
 }
 
 function generateTable() {
@@ -54,21 +54,15 @@ function generateTable() {
 
 
 function addSanta(e) {
-
     const tempTd = e.target;
-
-    
-
     for (const child of tempTd.children) {
         if (child.classList.contains("milk") || child.classList.contains("cookie")) return;
     }
-
     if (checkSanta()) return;
 
     currentRow = Number(tempTd.parentNode.rowIndex)
     currentCell = Number(tempTd.cellIndex)
 
-    
     const img = document.createElement("img");
     img.classList.add("santa");
     img.src = "images/santa.png"
@@ -95,44 +89,44 @@ function showGameOver() {
     moves.innerHTML = `Hátralevő lépések: ${0}`
 }
 
+function moveSanta(ekey) {
+    if (ekey === "ArrowUp") {
+        currentRow--;
+        deleteCell();
+        generateSanta(table);
+        
+    }
+    if (ekey === "ArrowLeft") {
+        currentCell--;
+        deleteCell();
+        generateSanta(table);
+    }
+    if (ekey === "ArrowRight") {
+        currentCell++;
+        deleteCell();
+        generateSanta(table);
+    }
+    if (ekey === "ArrowDown") {
+        currentRow++;
+        deleteCell();
+        generateSanta(table);
+    }
+}
 
 document.addEventListener("keydown", (e) => {
     const arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     if (!arrows.includes(e.key)) return;
     if (!checkSanta()) return;
     e.preventDefault();
+    deleteCell()
+    moveSanta(e.key)
     if (move > 1) {
-        move--;
+        --move;
         moves.innerHTML = `Hátralevő lépések: ${move}`
     }
-    else if(move == 1){
+    else{
         showGameOver();
         return;
-    }
-
-
-
-    deleteCell()
-    if (e.key === "ArrowUp") {
-        currentRow--;
-        deleteCell();
-        generateSanta(table);
-
-    }
-    if (e.key === "ArrowLeft") {
-        currentCell--;
-        deleteCell();
-        generateSanta(table);
-    }
-    if (e.key === "ArrowRight") {
-        currentCell++;
-        deleteCell();
-        generateSanta(table);
-    }
-    if (e.key === "ArrowDown") {
-        currentRow++;
-        deleteCell();
-        generateSanta(table);
     }
 })
 
