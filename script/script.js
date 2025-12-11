@@ -10,7 +10,7 @@ let currentRow = 0;
 let currentCell = 0;
 
 let points = 0;
-let move = 10;
+let move = 20;
 
 
 
