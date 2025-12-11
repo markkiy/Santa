@@ -92,9 +92,6 @@ table img{
     pointer-events: none;
 }
 
-img.santa{
-    transition: transform 120ms linear;
-}
 
 #gameOver {
     position: fixed;
