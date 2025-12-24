@@ -3,8 +3,8 @@ const playButton = document.getElementById("play");
 const moves = document.getElementById("moves");
 const score = document.getElementById("score");
 
-const rowMax = 8;
-const cellMax = 10;
+const cellMax = 8;
+const rowMax = 10;
 
 let currentRow = 0;
 let currentCell = 0;
@@ -12,7 +12,7 @@ let currentCell = 0;
 let points = 0;
 let move = 20;
 
-
+let gameActive = true;
 
 
 function randomNumber(min, max) {
@@ -25,32 +25,30 @@ function showInstructions() {
 }
 
 function generateTable() {
+
     showInstructions()
 
-    for (let i = 0; i < cellMax; i++) {
+    for (let i = 0; i < rowMax; i++) {
         let tr = document.createElement("tr")
-        for (let j = 0; j < rowMax; j++) {
+        for (let j = 0; j < cellMax; j++) {
             let td = document.createElement("td")
-            let picture = document.createElement("img")
-            if (randomNumber(0, 100) <= 5) {
-                picture.src = "images/cookie2.png"
-                picture.classList.add("cookie")
-                td.appendChild(picture)
-            }
-            else if (randomNumber(0, 100) <= 15) {
-                picture.src = "images/milk3.png"
-                picture.classList.add("milk")
-                td.appendChild(picture)
-            }
+            let rand = randomNumber(0, 100);
+            if (rand <= 5) placeImageItem(td, "cookie");
+            else if (rand <= 15) placeImageItem(td, "milk");
             tr.appendChild(td)
         }
         table.appendChild(tr)
     }
 }
 
-// document.addEventListener("click", (e) => (
-//     console.log(e.target)
-// ))
+function placeImageItem(td, type) {
+    let picture = document.createElement("img")
+    picture.src = `images/${type}.png`
+    picture.classList.add(type)
+    td.appendChild(picture)
+}
+
+
 
 
 function addSanta(e) {
@@ -62,6 +60,7 @@ function addSanta(e) {
 
     currentRow = Number(tempTd.parentNode.rowIndex)
     currentCell = Number(tempTd.cellIndex)
+    highlightTrail(currentRow,currentCell);
 
     const img = document.createElement("img");
     img.classList.add("santa");
@@ -77,7 +76,7 @@ function deleteCell() {
     return table.rows[currentRow].cells[currentCell].innerText = "";
 }
 
-function generateSanta(table) {
+function placeSanta(table) {
     const img = document.createElement("img");
     img.classList.add("santa");
     img.src = "images/santa.png"
@@ -86,50 +85,84 @@ function generateSanta(table) {
 
 function showGameOver() {
     document.getElementById("gameOver").classList.add("active");
-    moves.innerHTML = `Hátralevő lépések: ${0}`
 }
 
-function moveSanta(ekey) {
-    if (ekey === "ArrowUp") {
-        currentRow--;
-        deleteCell();
-        generateSanta(table);
-        
-    }
-    if (ekey === "ArrowLeft") {
-        currentCell--;
-        deleteCell();
-        generateSanta(table);
-    }
-    if (ekey === "ArrowRight") {
-        currentCell++;
-        deleteCell();
-        generateSanta(table);
-    }
-    if (ekey === "ArrowDown") {
-        currentRow++;
-        deleteCell();
-        generateSanta(table);
-    }
-}
-
-document.addEventListener("keydown", (e) => {
-    const arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
-    if (!arrows.includes(e.key)) return;
-    if (!checkSanta()) return;
-    e.preventDefault();
-    deleteCell()
-    moveSanta(e.key)
+function updateMoveCounter() {
     if (move > 1) {
         --move;
         moves.innerHTML = `Hátralevő lépések: ${move}`
     }
-    else{
+    else {
         showGameOver();
+        gameActive = false;
+        moves.innerHTML = `Hátralevő lépések: ${0}`
+    }
+}
+
+function updateScore(point) {
+    score.innerHTML = `Pontszám: ${point}`
+}
+
+function countPoints(row, cell) {
+    const currentTd = table.rows[row].cells[cell]
+    if (currentTd.querySelector(".milk")) points += 2;
+    else if (currentTd.querySelector(".cookie")) points += 5;
+
+    updateScore(points);
+
+}
+
+function highlightTrail(row,cell){
+    const td = table.rows[row].cells[cell];
+    const cellClasses = td.classList;
+    if (cellClasses.contains("visited")) return;
+    cellClasses.add("visited")
+}
+
+
+function updateSantaPosition(newRow, newCell) {
+    deleteCell();
+    currentRow = newRow;
+    currentCell = newCell;
+    countPoints(currentRow, currentCell);
+    deleteCell();
+    placeSanta(table);
+    updateMoveCounter();
+}
+
+function moveSanta(key) {
+    if (!gameActive) return;
+    let newCell = currentCell;
+    let newRow = currentRow;
+    if (key === "ArrowUp") {
+        newRow = currentRow - 1;
+    }
+    if (key === "ArrowLeft") {
+        newCell = currentCell - 1;
+    }
+    if (key === "ArrowRight") {
+        newCell = currentCell + 1;
+    }
+    if (key === "ArrowDown") {
+        newRow = currentRow + 1;
+    }
+
+    if ((newRow >= rowMax) || (newCell >= cellMax) || !(newCell >= 0) || !(newRow >= 0)) {
         return;
     }
-})
 
+    updateSantaPosition(newRow, newCell);
+    highlightTrail(newRow,newCell);
+}
+
+document.addEventListener("keydown", (e) => {
+    if (e.repeat) return;
+    const arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+    if (!arrows.includes(e.key)) return;
+    if (!checkSanta()) return;
+    e.preventDefault();
+    moveSanta(e.key);
+})
 
 
 

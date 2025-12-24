@@ -120,3 +120,8 @@ table td:hover {
     cursor: pointer;
     transition: background 0.2s ease;
 }
+
+.visited{
+    background: rgba(221, 89, 89, 0.1);
+}
+
