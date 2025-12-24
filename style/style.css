@@ -109,10 +109,44 @@ table img{
     text-shadow: 1px 1px 8px #000;
     z-index: 2;
 }
+#gameOver2 {
+    position: fixed;
+    padding-top: 200px;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    font-weight: bold;
+    color: #ff4d4d;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    text-shadow: 1px 1px 8px #000;
+    z-index: 2;
+}
 
 #gameOver.active {
     opacity: 1;
     pointer-events: all;
+}
+#gameOver2.active {
+    opacity: 0.4;
+    pointer-events: all;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 table td:hover {

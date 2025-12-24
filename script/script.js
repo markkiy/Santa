@@ -2,6 +2,7 @@ const table = document.getElementById("table");
 const playButton = document.getElementById("play");
 const moves = document.getElementById("moves");
 const score = document.getElementById("score");
+const endScore = document.getElementById("gameOver2");
 
 const cellMax = 8;
 const rowMax = 10;
@@ -85,6 +86,10 @@ function placeSanta(table) {
 
 function showGameOver() {
     document.getElementById("gameOver").classList.add("active");
+    endScore.innerHTML = `Pontszám: ${points}`
+    document.getElementById("gameOver2").classList.add("active");
+
+    
 }
 
 function updateMoveCounter() {
